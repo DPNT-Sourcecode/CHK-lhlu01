@@ -6,15 +6,21 @@ namespace BeFaster.App.Solutions.CHK
     {
         public int Checkout(string? skus)
         {
-            // if null or empty return -1
+            // if empty return 0
+            // if null return -1
             // maintain a dictionary to hold the SKU prices and special offers
             // maintain a dictionary to hold the SKU special offers counts
             // maintain a dictionary to hold the SKU counts
             // go through the skus string, count the occurrences of each SKU
             // if an unknown SKU is found return -1
-            if (string.IsNullOrEmpty(skus))
+            
+            if (skus == null)
             {
                 return -1;
+            }
+            if (skus.Length == 0)
+            {
+                return 0;
             }
             var skuPrices = new Dictionary<string, int>
             {
@@ -61,4 +67,5 @@ namespace BeFaster.App.Solutions.CHK
         }
     }
 }
+
 

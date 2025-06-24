@@ -7,7 +7,7 @@ namespace BeFaster.App.Tests.Solutions.CHK
     public class CheckoutSolutionTest
     {
         [TestCase(null, ExpectedResult = -1)]
-        [TestCase("", ExpectedResult = -1)]
+        [TestCase("", ExpectedResult = 0)]
         [TestCase("XYZ", ExpectedResult = -1)]
         [TestCase("ABC", ExpectedResult = 100)]
         [TestCase("ABDABCCA", ExpectedResult = 230)]
@@ -18,3 +18,4 @@ namespace BeFaster.App.Tests.Solutions.CHK
         }
     }
 }
+
