@@ -37,11 +37,19 @@ namespace BeFaster.App.Solutions.CHK
         {
             { "A", new () { (5, 200), (3, 130) } },
             { "B", new () { (2, 45) } },
+            { "H", new () { (10, 80), (5, 45) } },
+            { "K", new () { (2, 150) } },
+            { "P", new () { (5, 200) } },
+            { "Q", new () { (3, 80) } },
+            { "V", new () { (3, 130), (2, 90) } },
         };
         private readonly Dictionary<string, List<(int, (string, int))>> _getFreeOffers = new()
         {
             { "E", new () { (2, ("B", 1)) } },
             { "F", new () { (2, ("F", 1)) } },
+            { "N", new () { (3, ("M", 1)) } },
+            { "R", new () { (3, ("Q", 1)) } },
+            { "U", new () { (3, ("U", 1)) } },
         };
 
         public int Checkout(string? skus)
@@ -149,3 +157,4 @@ namespace BeFaster.App.Solutions.CHK
         }
     }
 }
+
