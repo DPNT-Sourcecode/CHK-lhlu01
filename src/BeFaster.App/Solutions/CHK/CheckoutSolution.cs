@@ -5,40 +5,40 @@ namespace BeFaster.App.Solutions.CHK
     public class CheckoutSolution
     {
         private readonly Dictionary<string, int> _skuPrices = new()
-            {
-                { "A", 50 },
-                { "B", 30 },
-                { "C", 20 },
-                { "D", 15 },
-                { "E", 40 },
-                { "F", 10 },
-                { "G", 20 },
-                { "H", 10 },
-                { "I", 35 },
-                { "J", 60 },
-                { "K", 80 },
-                { "L", 90 },
-                { "M", 15 },
-                { "N", 40 },
-                { "O", 10 },
-                { "P", 50 },
-                { "Q", 30 },
-                { "R", 50 },
-                { "S", 30 },
-                { "T", 20 },
-                { "U", 40 },
-                { "V", 50 },
-                { "W", 20 },
-                { "X", 90 },
-                { "Y", 10 },
-                { "Z", 50 }
-            };
+        {
+            { "A", 50 },
+            { "B", 30 },
+            { "C", 20 },
+            { "D", 15 },
+            { "E", 40 },
+            { "F", 10 },
+            { "G", 20 },
+            { "H", 10 },
+            { "I", 35 },
+            { "J", 60 },
+            { "K", 70 },
+            { "L", 90 },
+            { "M", 15 },
+            { "N", 40 },
+            { "O", 10 },
+            { "P", 50 },
+            { "Q", 30 },
+            { "R", 50 },
+            { "S", 20 },
+            { "T", 20 },
+            { "U", 40 },
+            { "V", 50 },
+            { "W", 20 },
+            { "X", 17 },
+            { "Y", 20 },
+            { "Z", 21 }
+        };
         private readonly Dictionary<string, List<(int, int)>> _priceOffers = new()
         {
             { "A", new () { (5, 200), (3, 130) } },
             { "B", new () { (2, 45) } },
             { "H", new () { (10, 80), (5, 45) } },
-            { "K", new () { (2, 150) } },
+            { "K", new () { (2, 120) } },
             { "P", new () { (5, 200) } },
             { "Q", new () { (3, 80) } },
             { "V", new () { (3, 130), (2, 90) } },
@@ -50,6 +50,10 @@ namespace BeFaster.App.Solutions.CHK
             { "N", new () { (3, ("M", 1)) } },
             { "R", new () { (3, ("Q", 1)) } },
             { "U", new () { (3, ("U", 1)) } },
+        };
+        private readonly Dictionary<string, (int, int)> _groupOffers = new()
+        {
+            { "ZSTYX", (3, 45) }
         };
 
         public int Checkout(string? skus)
@@ -99,6 +103,7 @@ namespace BeFaster.App.Solutions.CHK
             }
 
             ApplyGetFreeOffers(skuCounts, skuTotals);
+            ApplyGroupOffers(skuCounts, skuTotals);
             return skuTotals.Values.Sum();
         }
 
@@ -155,5 +160,50 @@ namespace BeFaster.App.Solutions.CHK
                 }
             }
         }
+
+        private void ApplyGroupOffers(Dictionary<string, int> skuCounts, Dictionary<string, int> skuTotals)
+        { 
+            foreach (var groupOffer in _groupOffers)
+            {
+                var groupSkus = groupOffer.Key;
+                var requiredCount = groupOffer.Value.Item1;
+                var offerPrice = groupOffer.Value.Item2;
+                var offerPricePerSku = offerPrice / requiredCount;
+
+                var currentSkuCounts = new Dictionary<string, int>();
+                foreach (var sku in groupSkus)
+                {
+                    var skuStr = sku.ToString();
+                    if (skuCounts.TryGetValue(skuStr, out var count))
+                    {
+                        currentSkuCounts[skuStr] += currentSkuCounts.GetValueOrDefault(skuStr, 0) + count;
+                        var numberOfGroupOffers = currentSkuCounts.Values.Sum() / requiredCount;
+                        if (numberOfGroupOffers > 0)
+                        {
+                            var numberOfSkusToUpdate = numberOfGroupOffers * requiredCount;
+                            foreach (var groupSku in currentSkuCounts)
+                            {
+                                var groupSkuStr = groupSku.Key;
+                                var groupSkuCount = groupSku.Value;
+                                if (groupSkuCount <= numberOfSkusToUpdate)
+                                {
+                                    skuTotals[groupSkuStr] = groupSkuCount * offerPricePerSku;
+                                    numberOfSkusToUpdate -= groupSkuCount;
+                                }
+                                else
+                                {
+                                    skuTotals[groupSkuStr] = numberOfSkusToUpdate * offerPricePerSku +
+                                        (groupSkuCount - numberOfSkusToUpdate) * _skuPrices[groupSkuStr];
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+                    
+        }
     }
 }
+
