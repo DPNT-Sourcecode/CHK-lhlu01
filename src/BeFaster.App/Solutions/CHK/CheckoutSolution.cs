@@ -66,24 +66,9 @@ namespace BeFaster.App.Solutions.CHK
 
                 skuCounts[skuStr] = skuCounts.GetValueOrDefault(skuStr, 0) + 1;
                 skuTotals[skuStr] = CalculateSkuTotal(skuStr, skuCounts[skuStr]);
-
-                if (_getFreeOffers.TryGetValue(skuStr, out var freeOffers))
-                {
-                    foreach (var offer in freeOffers)
-                    {
-                        var offerCount = offer.Item1;
-                        var freeSku = offer.Item2.Item1;
-                        var freeCount = offer.Item2.Item2;
-
-                        if (skuCounts[skuStr] == offerCount && skuCounts.ContainsKey(freeSku))
-                        {
-                            skuCounts[freeSku] = Math.Max(skuCounts[freeSku] - freeCount, 0);
-                            skuTotals[freeSku] = CalculateSkuTotal(freeSku, skuCounts[freeSku]);
-                        }
-                    }
-                }
             }
 
+            ApplyGetFreeOffers(skuCounts, skuTotals);
             return skuTotals.Values.Sum();
         }
 
@@ -107,6 +92,30 @@ namespace BeFaster.App.Solutions.CHK
             skuTotal += currentCount * _skuPrices[skuStr];
             return skuTotal;
         }
+
+        private void ApplyGetFreeOffers(Dictionary<string, int> skuCounts, Dictionary<string, int> skuTotals)
+        {
+            foreach (var sku in skuCounts)
+            {
+                var skuStr = sku.Key;
+                if (_getFreeOffers.TryGetValue(skuStr, out var freeOffers))
+                {
+                    foreach (var offer in freeOffers)
+                    {
+                        var offerCount = offer.Item1;
+                        var freeSku = offer.Item2.Item1;
+                        var freeCount = offer.Item2.Item2;
+
+                        if (sku.Value == offerCount && skuCounts.ContainsKey(freeSku))
+                        {
+                            skuCounts[freeSku] = Math.Max(skuCounts[freeSku] - freeCount, 0);
+                            skuTotals[freeSku] = CalculateSkuTotal(freeSku, skuCounts[freeSku]);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
+
 
