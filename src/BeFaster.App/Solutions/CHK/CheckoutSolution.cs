@@ -48,9 +48,9 @@ namespace BeFaster.App.Solutions.CHK
                 { "A", new () { (5, 200), (3, 130) } },
                 { "B", new () { (2, 45) } },
             };
-            var getFreeOffers = new Dictionary<string, List<(string, int)>>
+            var getFreeOffers = new Dictionary<string, List<(int, (string, int))>>
             {
-                { "E", new () { ("B", 1) } },
+                { "E", new () { (2, ("B", 1)) } },
             };
             var skuCounts = new Dictionary<string, int>();
             var skuTotals = new Dictionary<string, int>();
@@ -88,10 +88,11 @@ namespace BeFaster.App.Solutions.CHK
                 {
                     foreach (var offer in freeOffers)
                     {
-                        var freeSku = offer.Item1;
-                        var freeCount = offer.Item2;
+                        var offerCount = offer.Item1;
+                        var freeSku = offer.Item2.Item1;
+                        var freeCount = offer.Item2.Item2;
 
-                        if (skuCounts.ContainsKey(freeSku))
+                        if (skuCounts[skuStr] == offerCount && skuCounts.ContainsKey(freeSku))
                         {
                             skuTotals[freeSku] -= Math.Max(freeCount * skuPrices[freeSku], 0);
                         }
@@ -103,5 +104,6 @@ namespace BeFaster.App.Solutions.CHK
         }
     }
 }
+
 
 
