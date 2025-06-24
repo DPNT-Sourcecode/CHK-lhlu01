@@ -8,12 +8,18 @@ namespace BeFaster.App.Solutions.CHK
         {
             // if empty return 0
             // if null return -1
-            // maintain a dictionary to hold the SKU prices and special offers
+            // maintain a dictionary to hold the SKU prices
             // maintain a dictionary to hold the SKU special offers counts
-            // maintain a dictionary to hold the SKU counts
+            // the special offers should be sorted descending by quantity
+            // maintain a dictionary to hold the cart SKU counts
             // go through the skus string, count the occurrences of each SKU
+            // calculate the total price by:
+            // floor division of the SKU count by the special offer quantity
+            // if the result is greater than 0 multiply it by the special offer price
+            // if the result is 0, move on to the next special offer
+            // if no special offer is found, multiply the SKU count by the SKU price
             // if an unknown SKU is found return -1
-            
+
             if (skus == null)
             {
                 return -1;
@@ -67,3 +73,4 @@ namespace BeFaster.App.Solutions.CHK
         }
     }
 }
+
