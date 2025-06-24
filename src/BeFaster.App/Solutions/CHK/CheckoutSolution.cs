@@ -191,14 +191,7 @@ namespace BeFaster.App.Solutions.CHK
                                 }
                                 if (groupSkuCount <= numberOfSkusToUpdate)
                                 {
-                                    if (groupSkuCount >= skuCounts[groupSkuStr])
-                                    {
-                                        skuTotals[groupSkuStr] = groupSkuCount * offerPricePerSku;
-                                    }
-                                    else
-                                    {
-                                        skuTotals[groupSkuStr] += groupSkuCount * offerPricePerSku;
-                                    }
+                                    skuTotals[groupSkuStr] = skuCounts[groupSkuStr] * offerPricePerSku;
                                     numberOfSkusToUpdate -= groupSkuCount;
                                     currentSkuCounts[groupSkuStr] = 0;
                                 }
@@ -219,4 +212,5 @@ namespace BeFaster.App.Solutions.CHK
         }
     }
 }
+
 
