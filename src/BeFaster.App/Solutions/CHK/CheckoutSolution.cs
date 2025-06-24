@@ -11,6 +11,7 @@ namespace BeFaster.App.Solutions.CHK
                 { "C", 20 },
                 { "D", 15 },
                 { "E", 40 },
+                { "F", 10 },
             };
         private readonly Dictionary<string, List<(int, int)>> _priceOffers = new()
         {
@@ -20,6 +21,7 @@ namespace BeFaster.App.Solutions.CHK
         private readonly Dictionary<string, List<(int, (string, int))>> _getFreeOffers = new()
         {
             { "E", new () { (2, ("B", 1)) } },
+            { "F", new () { (2, ("F", 1)) } },
         };
 
         public int Checkout(string? skus)
@@ -127,4 +129,5 @@ namespace BeFaster.App.Solutions.CHK
         }
     }
 }
+
 
