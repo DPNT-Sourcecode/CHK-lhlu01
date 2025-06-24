@@ -9,7 +9,7 @@ namespace BeFaster.App.Solutions.CHK
             // if empty return 0
             // if null return -1
             // maintain a dictionary to hold the SKU prices
-            // maintain a dictionary to hold the SKU special offers counts
+            // maintain a dictionary to hold the SKU special offers quantities and prices
             // the special offers should be sorted descending by quantity
             // maintain a dictionary to hold the cart SKU counts
             // go through the skus string, count the occurrences of each SKU
@@ -28,25 +28,22 @@ namespace BeFaster.App.Solutions.CHK
             {
                 return 0;
             }
+
             var skuPrices = new Dictionary<string, int>
             {
                 { "A", 50 },
                 { "B", 30 },
                 { "C", 20 },
                 { "D", 15 },
+                { "E", 40 },
             };
-            var offersPrices = new Dictionary<string, int>
+            var offers = new Dictionary<string, List<(int, int)>>
             {
-                { "A", 130 },
-                { "B", 45 },
-            };
-            var offersQuantity = new Dictionary<string, int>
-            {
-                { "A", 3 },
-                { "B", 2 },
+                { "A", new () { (5, 200), (3, 130) } },
+                { "B", new () { (2, 45) } },
             };
             var skuCounts = new Dictionary<string, int>();
-            var appliedOffers = new Dictionary<string, int>();
+
             foreach (var sku in skus)
             {
                 var skuStr = sku.ToString();
@@ -55,22 +52,31 @@ namespace BeFaster.App.Solutions.CHK
                     return -1;
                 }
                 skuCounts[skuStr] = skuCounts.GetValueOrDefault(skuStr, 0) + 1;
-                if (offersQuantity.ContainsKey(skuStr) && skuCounts[skuStr] == offersQuantity[skuStr])
-                {
-                    appliedOffers[skuStr] = appliedOffers.GetValueOrDefault(skuStr, 0) + 1;
-                    skuCounts[skuStr] = 0;
-                }
             }
+
             int total = 0;
             foreach (var sku in skuCounts)
             {
                 var skuStr = sku.Key;
                 var count = sku.Value;
+                if (offers.ContainsKey(skuStr))
+                {
+                    foreach (var offer in offers[skuStr])
+                    {
+                        var offerCount = offer.Item1;
+                        var offerPrice = offer.Item2;
+
+                        if (count >= offerCount)
+                        {
+                            total += count / offerCount * offerPrice;
+                            count %= offerCount;
+                        }
+                    }
+                }
+
                 total += count * skuPrices[skuStr];
-                total += appliedOffers.GetValueOrDefault(skuStr, 0) * offersPrices.GetValueOrDefault(skuStr, 0);
             }
             return total;
         }
     }
 }
-
