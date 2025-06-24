@@ -103,13 +103,13 @@ namespace BeFaster.App.Solutions.CHK
                 {
                     foreach (var offer in freeOffers)
                     {
-                        var offerCount = offer.Item1;
+                        var requiredCountForOffer = offer.Item1;
                         var freeSku = offer.Item2.Item1;
                         var freeCount = offer.Item2.Item2;
 
-                        if (skuCount >= offerCount && skuCounts.ContainsKey(freeSku))
+                        if (skuCount >= requiredCountForOffer && skuCounts.ContainsKey(freeSku))
                         {
-                            var offersToApply = skuCount / offerCount;
+                            var offersToApply = skuCount / requiredCountForOffer;
                             skuCounts[freeSku] = Math.Max(skuCounts[freeSku] - (freeCount * offersToApply), 0);
                             skuTotals[freeSku] = CalculateSkuTotal(freeSku, skuCounts[freeSku]);
                         }
@@ -119,3 +119,4 @@ namespace BeFaster.App.Solutions.CHK
         }
     }
 }
+
