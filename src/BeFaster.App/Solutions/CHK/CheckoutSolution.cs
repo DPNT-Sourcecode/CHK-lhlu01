@@ -185,15 +185,21 @@ namespace BeFaster.App.Solutions.CHK
                             {
                                 var groupSkuStr = groupSku.Key;
                                 var groupSkuCount = groupSku.Value;
+                                if (groupSkuCount == 0)
+                                {
+                                    continue;
+                                }
                                 if (groupSkuCount <= numberOfSkusToUpdate)
                                 {
                                     skuTotals[groupSkuStr] = groupSkuCount * offerPricePerSku;
                                     numberOfSkusToUpdate -= groupSkuCount;
+                                    currentSkuCounts[groupSkuStr] = 0;
                                 }
                                 else
                                 {
                                     skuTotals[groupSkuStr] = numberOfSkusToUpdate * offerPricePerSku +
                                         (groupSkuCount - numberOfSkusToUpdate) * _skuPrices[groupSkuStr];
+                                    currentSkuCounts[groupSkuStr] -= numberOfSkusToUpdate;
                                     break;
                                 }
 
@@ -206,4 +212,5 @@ namespace BeFaster.App.Solutions.CHK
         }
     }
 }
+
 
