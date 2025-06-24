@@ -176,7 +176,7 @@ namespace BeFaster.App.Solutions.CHK
                     var skuStr = sku.ToString();
                     if (skuCounts.TryGetValue(skuStr, out var count))
                     {
-                        currentSkuCounts[skuStr] += currentSkuCounts.GetValueOrDefault(skuStr, 0) + count;
+                        currentSkuCounts[skuStr] = currentSkuCounts.GetValueOrDefault(skuStr, 0) + count;
                         var numberOfGroupOffers = currentSkuCounts.Values.Sum() / requiredCount;
                         if (numberOfGroupOffers > 0)
                         {
@@ -212,5 +212,6 @@ namespace BeFaster.App.Solutions.CHK
         }
     }
 }
+
 
 
