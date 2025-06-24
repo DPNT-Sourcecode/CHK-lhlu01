@@ -36,7 +36,7 @@ namespace BeFaster.App.Solutions.CHK
             // if an unknown SKU is found return -1
             // increment the SKU count in the SKU counts dictionary
             // calculate the SKU total price by:
-            // use a while loop to keep trying to apply special offers until no more can be applied
+            // use a for loop to keep trying to apply special offers until no more can be applied
             // use a current SKU count to keep track of the remaining SKU count
             // check if the SKU count has a special offer if the SKU count is greater than or equal to the special offer quantity
             // divide the SKU count by the special offer quantity
@@ -117,5 +117,6 @@ namespace BeFaster.App.Solutions.CHK
         }
     }
 }
+
 
 
