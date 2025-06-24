@@ -13,7 +13,7 @@ namespace BeFaster.App.Solutions.CHK
             // the special priceOffers should be sorted descending by quantity
             // maintain a dictionary to hold the get free SKUs special offers quantities
             // maintain a dictionary to hold the cart SKU counts
-            // maintain a dictionary to hold the cart SKU prices
+            // maintain a dictionary to hold the cart SKU totals
             // go through the skus string
             // if an unknown SKU is found return -1
             // increment the SKU count in the SKU counts dictionary
@@ -53,6 +53,7 @@ namespace BeFaster.App.Solutions.CHK
                 { "E", new () { ("B", 1) } },
             };
             var skuCounts = new Dictionary<string, int>();
+            var skuTotals = new Dictionary<string, int>();
 
             foreach (var sku in skus)
             {
@@ -63,6 +64,7 @@ namespace BeFaster.App.Solutions.CHK
                 }
 
                 skuCounts[skuStr] = skuCounts.GetValueOrDefault(skuStr, 0) + 1;
+
                 var currentCount = skuCounts[skuStr];
                 int skuTotal = 0;
                 if (priceOffers.TryGetValue(skuStr, out var skuOffers))
@@ -80,7 +82,7 @@ namespace BeFaster.App.Solutions.CHK
                     }
                 }
                 skuTotal += currentCount * skuPrices[skuStr];
-                skuPrices[skuStr] = skuTotal;
+                skuTotals[skuStr] = skuTotal;
 
                 if (getFreeOffers.TryGetValue(skuStr, out var freeOffers))
                 {
@@ -91,14 +93,15 @@ namespace BeFaster.App.Solutions.CHK
 
                         if (skuCounts.ContainsKey(freeSku))
                         {
-                            skuPrices[freeSku] -= Math.Max(freeCount * skuPrices[freeSku], 0);
+                            skuTotals[freeSku] -= Math.Max(freeCount * skuPrices[freeSku], 0);
                         }
                     }
                 }
             }
 
-            return skuPrices.Values.Sum();
+            return skuTotals.Values.Sum();
         }
     }
 }
+
 
