@@ -97,14 +97,8 @@ namespace BeFaster.App.Solutions.CHK
                 }
             }
 
-            int total = 0;
-            foreach (var sku in skuPrices)
-            {
-                var price = sku.Value;
-                total += price;
-            }
-
-            return total;
+            return skuPrices.Values.Sum();
         }
     }
 }
+
