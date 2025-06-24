@@ -4,6 +4,24 @@ namespace BeFaster.App.Solutions.CHK
 {
     public class CheckoutSolution
     {
+        private readonly Dictionary<string, int> _skuPrices = new()
+            {
+                { "A", 50 },
+                { "B", 30 },
+                { "C", 20 },
+                { "D", 15 },
+                { "E", 40 },
+            };
+        private readonly Dictionary<string, List<(int, int)>> _priceOffers = new()
+        {
+            { "A", new () { (5, 200), (3, 130) } },
+            { "B", new () { (2, 45) } },
+        };
+        private readonly Dictionary<string, List<(int, (string, int))>> _getFreeOffers = new()
+        {
+            { "E", new () { (2, ("B", 1)) } },
+        };
+
         public int Checkout(string? skus)
         {
             // if empty return 0
@@ -35,56 +53,21 @@ namespace BeFaster.App.Solutions.CHK
                 return 0;
             }
 
-            var skuPrices = new Dictionary<string, int>
-            {
-                { "A", 50 },
-                { "B", 30 },
-                { "C", 20 },
-                { "D", 15 },
-                { "E", 40 },
-            };
-            var priceOffers = new Dictionary<string, List<(int, int)>>
-            {
-                { "A", new () { (5, 200), (3, 130) } },
-                { "B", new () { (2, 45) } },
-            };
-            var getFreeOffers = new Dictionary<string, List<(int, (string, int))>>
-            {
-                { "E", new () { (2, ("B", 1)) } },
-            };
             var skuCounts = new Dictionary<string, int>();
             var skuTotals = new Dictionary<string, int>();
 
             foreach (var sku in skus)
             {
                 var skuStr = sku.ToString();
-                if (!skuPrices.ContainsKey(skuStr))
+                if (!_skuPrices.ContainsKey(skuStr))
                 {
                     return -1;
                 }
 
                 skuCounts[skuStr] = skuCounts.GetValueOrDefault(skuStr, 0) + 1;
+                skuTotals[skuStr] = CalculateSkuTotal(skuStr, skuCounts[skuStr]);
 
-                var currentCount = skuCounts[skuStr];
-                int skuTotal = 0;
-                if (priceOffers.TryGetValue(skuStr, out var skuOffers))
-                {
-                    foreach (var offer in skuOffers)
-                    {
-                        var offerCount = offer.Item1;
-                        var offerPrice = offer.Item2;
-
-                        if (currentCount >= offerCount)
-                        {
-                            skuTotal += currentCount / offerCount * offerPrice;
-                            currentCount %= offerCount;
-                        }
-                    }
-                }
-                skuTotal += currentCount * skuPrices[skuStr];
-                skuTotals[skuStr] = skuTotal;
-
-                if (getFreeOffers.TryGetValue(skuStr, out var freeOffers))
+                if (_getFreeOffers.TryGetValue(skuStr, out var freeOffers))
                 {
                     foreach (var offer in freeOffers)
                     {
@@ -94,7 +77,8 @@ namespace BeFaster.App.Solutions.CHK
 
                         if (skuCounts[skuStr] == offerCount && skuCounts.ContainsKey(freeSku))
                         {
-                            skuTotals[freeSku] -= Math.Max(freeCount * skuPrices[freeSku], 0);
+                            skuCounts[freeSku] = Math.Max(skuCounts[freeSku] - freeCount, 0);
+                            skuTotals[freeSku] = CalculateSkuTotal(freeSku, skuCounts[freeSku]);
                         }
                     }
                 }
@@ -102,5 +86,27 @@ namespace BeFaster.App.Solutions.CHK
 
             return skuTotals.Values.Sum();
         }
+
+        private int CalculateSkuTotal(string skuStr, int currentCount)
+        {
+            int skuTotal = 0;
+            if (_priceOffers.TryGetValue(skuStr, out var skuOffers))
+            {
+                foreach (var offer in skuOffers)
+                {
+                    var offerCount = offer.Item1;
+                    var offerPrice = offer.Item2;
+
+                    if (currentCount >= offerCount)
+                    {
+                        skuTotal += currentCount / offerCount * offerPrice;
+                        currentCount %= offerCount;
+                    }
+                }
+            }
+            skuTotal += currentCount * _skuPrices[skuStr];
+            return skuTotal;
+        }
     }
 }
+
